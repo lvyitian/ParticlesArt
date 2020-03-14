@@ -788,7 +788,7 @@ picImage.Move picImage.Left + picImage.Width \ 2 - NewWidth \ 2, picImage.Top + 
 picImage_Resize
 picImage.Cls
 picImage.PaintPicture picSrc.Picture, 0, 0, picImage.ScaleWidth, picImage.ScaleHeight
-If GenGif = True Or IsGif Then
+If IsAnimation And GenGif = True Or IsGif Then
 GenGif = False
 PlayGif_Click
 End If
@@ -1180,7 +1180,7 @@ If LCase(ImageType) = "gif" Then
     PlayGif.Visible = False
     StopGif.Visible = True
 Else
-    I = Shell(App.Path & "\ffmpeg.exe -i " & ImageFile & " -ss 1 " & App.Path & "\show.jpg -y", vbHide)
+    I = Shell(App.Path & "\ffmpeg.exe -i " & """" & ImageFile & """" & " -ss 1 " & """" & App.Path & "\show.jpg"" -y", vbHide)
     P = OpenProcess(SYNCHRONIZE, False, I)
     R = WaitForSingleObject(P, INFINITE)
     R = CloseHandle(P)
@@ -1292,7 +1292,7 @@ Dim I As Long, R As Long, P As Long
 If Not GenGif Then
 T_Width = Val(txtWidth.Text)
 T_Height = Val(txtHeight.Text)
-I = Shell(App.Path & "\ffmpeg.exe -i " & ImageFile & " -s " & T_Width & "*" & T_Height & " -r " & FPS & " " & App.Path & "\show.gif -y", vbHide)
+I = Shell(App.Path & "\ffmpeg.exe -i " & """" & ImageFile & """" & " -s " & T_Width & "*" & T_Height & " -r " & FPS & " " & """" & App.Path & "\show.gif"" -y", vbHide)
 P = OpenProcess(SYNCHRONIZE, False, I)
 R = WaitForSingleObject(P, INFINITE)
 R = CloseHandle(P)
@@ -1322,7 +1322,7 @@ If IsAnimation Then
     T_Width = Val(txtWidth.Text)
     T_Height = Val(txtHeight.Text)
     If Dir(App.Path & "\image\", vbDirectory) = "" Then MkDir (App.Path & "\image\")
-        I = Shell(App.Path & "\ffmpeg.exe -i " & ImageFile & " -s " & T_Width & "*" & T_Height & " -r " & FPS & " " & App.Path & "\image\frame%d.jpg -y", vbHide)
+        I = Shell(App.Path & "\ffmpeg.exe -i " & """" & ImageFile & """" & " -s " & T_Width & "*" & T_Height & " -r " & FPS & " " & """" & App.Path & "\image\frame%d.jpg"" -y", vbHide)
         P = OpenProcess(SYNCHRONIZE, False, I)
         R = WaitForSingleObject(P, INFINITE)
         R = CloseHandle(P)
@@ -1382,6 +1382,11 @@ Private Sub Form_QueryUnload(Cancel As Integer, UnloadMode As Integer)
 Clean
 End Sub
 Private Sub Clean()
+IsAnimation = False
+PlayGif.Visible = True
+PlayGif.Enabled = False
+StopGif.Visible = False
+
 If Not Dir(App.Path & "\show.jpg") = "" Then Kill App.Path & "\show.jpg"
 If Not Dir(App.Path & "\show.gif") = "" Then Kill App.Path & "\show.gif"
 
